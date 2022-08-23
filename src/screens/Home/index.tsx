@@ -1,11 +1,35 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+
+import { Participant } from '../../components/Participant';
 
 import { styles } from './style';
+import { useState } from 'react';
 export function Home() {
 
-  const handleParticipantAdd = () => {
-    console.log("Você clicou no botão de adicionar");
+  const [participants, setParticipants] = useState(['Fabiano'])
 
+  const handleParticipantAdd = () => {
+
+    if (participants.includes("João")) {
+      return Alert.alert("Participante existe", "Já existe um participante na lista com esse nome.")
+    }
+
+    setParticipants([...participants, "Ana"]);
+
+  }
+
+  const handleParticipantRemove = (name: string) => {
+    Alert.alert("Remover", `Remover o participante ${name}?`, [
+      {
+        text: 'Sim',
+        onPress: () => Alert.alert('Deletado!')
+      },
+      {
+        text: 'Não',
+        style: 'cancel'
+      }
+    ])
   }
 
   return (
@@ -25,10 +49,23 @@ export function Home() {
           onPress={handleParticipantAdd}
         >
           <Text style={styles.buttonText}>
-            +
+            <MaterialIcons name="add-task" size={34} color="#EEFC7A" />
           </Text>
         </TouchableOpacity>
       </View>
+
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        data={participants}
+        keyExtractor={item => item}
+        renderItem={({ item }) => (
+          <Participant
+            key={item}
+            name={item}
+            onRemove={() => handleParticipantRemove(item)}
+          />
+        )}
+      />
     </View>
   )
 }
